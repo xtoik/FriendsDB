@@ -1,0 +1,747 @@
+<html>
+    <head>
+      <title>FriendsDB</title>
+	  <script src="./json2.js"></script>
+	  <meta http-equiv="X-Frame-Options" content="allow">
+    </head>
+    <style>
+        div.utilsPanel 
+        {
+            color: white;
+            background-color:#627AAD;
+            border-left-color: #1D4088;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #1D4088;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #1D4088;
+            border-top-style: solid;
+            border-top-width: 1px;
+            border-bottom-color: #1D4088;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+        }
+        
+        a.utilsPanel
+        {
+            color:#fff;
+            display:block;
+            display:inline-block;
+            font-weight:bold;
+            height:22px;
+            padding:6px 10px 0px 10px;text-decoration:none
+        }
+        
+        a.utilsPanelDisplayed
+        {
+            color:Black;
+            display:block;
+            display:inline-block;
+            font-weight:bold;
+            height:22px;
+            padding:6px 10px 0px 10px;
+            text-decoration:none;
+        }
+        
+        table.counter
+        {
+            border-left-color: #1D4088;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #1D4088;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #1D4088;
+            border-top-style: solid;
+            border-top-width: 1px;
+            border-bottom-color: #1D4088;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+        }
+        
+        table.hidden
+        {
+            color: white;
+            background-color:#627AAD;
+            display:block;
+            display:inline-block;
+            font-weight:bold;
+            text-decoration:none
+        }
+        
+        body,table
+        {
+            background:#fff;
+            font-family:"lucida grande",
+            tahoma,verdana,arial,sans-serif;
+            font-size:11px;
+            color:#333;
+            margin:0;
+            padding:0;
+            text-align:left;
+            direction:ltr;
+            unicode-bidi:embed;
+        }
+        
+        select
+        {
+            border:1px solid #bdc7d8;
+            font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+            font-size:11px;
+            padding:2px
+        }
+        
+    </style>
+	
+    <body>
+        <div id="fb-root"></div>
+        <script src="https://connect.facebook.net/en_US/all.js">
+        </script>
+        <div id="divTitle"><center><h1>FriendsDB</h1></center></div>
+        <div id="divShowCols" class="utilsPanel" style="text-align:right;float:right;position:absolute;top:0px;right:0px;visibility:visible">
+            <a class="utilsPanel" title="Select Columns" href="javascript:showCols(true);">Columns</a>
+        </div>
+        <div id="divCols" class="utilsPanel" style="text-align:right;float:right;position:absolute;top:0px;right:0px;visibility:hidden">
+            <table>
+                <tr>
+                    <td colspan="3" style="text-align:right"><a class="utilsPanelDisplayed" title="Select Columns" href="javascript:showCols(false);">Columns</a></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="chkGender" name="chkGender" checked="checked" onclick="javascript:columnsChanged();"></input><b>Gender</b></td>
+                    <td><input type="checkbox" id="chkBirth" name="chkBirth"  checked="checked" onclick="javascript:columnsChanged();"></input><b>Birth</b></td>
+                    <td><input type="checkbox" id="chkRelStatus" name="chkRelStatus"  checked="checked" onclick="javascript:columnsChanged();"></input><b>Relationship status</b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td><input type="checkbox" id="chkHometown" name="chkHometown"  checked="checked" onclick="javascript:filterChanged();"></input><b>Hometown</b></td>
+                </tr>
+                </table>
+        </div>
+        
+        <div id="divShowFilters" class="utilsPanel" style="float:left;position:absolute;top:0px;left:0px;visibility:visible">
+            <a class="utilsPanel" title="Select Filters" href="javascript:showFilters(true);">Filters</a>
+        </div>
+        <div id="divFilters" class="utilsPanel" style="float:left;position:absolute;top:0px;left:0px;width:auto;visibility:hidden">
+            <table>
+                <tr>
+                    <td colspan="2"><a class="utilsPanelDisplayed" title="Close choose filter" href="javascript:showFilters(false);">Filters</a></td>
+                </tr>
+                <tr>
+                    <td style="text-align:Right"><div id="divCaptionGender"><b>Gender:</b></div></td>                        
+                    <td>
+                        <div id="divSelectGender">                                
+                            <input type="radio" id="rdoGenderAll" checked="checked" name="rdoGender" onclick="javascript:filterChanged();"></input>Any
+                            <input type="radio" id="rdoGenderFemale" name="rdoGender" onclick="javascript:filterChanged();"></input>Female
+                            <input type="radio" id="rdoGenderMale" name="rdoGender" onclick="javascript:filterChanged();"></input>Male
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:Right"><b>Relationship Status:</b></td>
+                    <td>
+                        <div id="divSelectRelStatus">
+                            <select id="cmbRelStatus" onchange="javascript:filterChanged();">
+                                <option id="optRelStatusAny" value="Any" selected="selected" >Any</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:Right"><b>Hometown:</b></td>
+                    <td>
+                        <div id="divSelectHometown">                
+                            <select id="cmbHometown" onchange="javascript:filterChanged();">
+                                <option id="optHometownAny" value="Any" selected="selected" >Any</option>
+                            </select>
+                        </div> 
+                    </td>
+                </tr>
+            </table>            
+        </div>
+
+        <div align="center">
+            <div id="divFriendsInfo"></div><br />
+        </div>
+
+      <script>
+
+      // REGION MAIN
+          var mFriendsDB;
+          var mLockDB;
+          var mDivFriends = document.getElementById('divFriendsInfo');
+          var mCurrentSort;
+          var mPageSize = 30;
+          var mLoadInProgress = true;
+          if (window.location.hash.length == 0) {
+              url = "https://www.facebook.com/dialog/oauth?client_id=128582473878430" +
+                  "&response_type=token&redirect_uri=" + 
+                  "https://googledrive.com/host/0B8LK5_jvW5ZjamNWSGhCNUNuX0E/index.html" +
+                  "&scope=friends_relationship_details,friends_birthday,friends_relationships,friends_hometown";
+              //alert('Opening URL: ' + url);
+              window.location = url;
+          } else {
+              accessToken = window.location.hash.substring(1);
+
+              FB.init({
+                  appId: '128582473878430', cookie: true,
+                  status: true, xfbml: true
+              });
+
+              var localLoad = false;
+              if (supports_html5_storage()) {
+                  try{
+                    mFriendsDB = JSON.parse(localStorage.getItem("friendsDB"));
+                  } catch (e) {                    
+                    mFriendsDB = null;
+                  }
+                localLoad = typeof (mFriendsDB) != "undefined" && mFriendsDB != null;
+
+                restoreColumnChecked(document.getElementById("chkBirth"));
+                restoreColumnChecked(document.getElementById("chkGender"));
+                restoreColumnChecked(document.getElementById("chkHometown"));
+                restoreColumnChecked(document.getElementById("chkRelStatus"));
+                restoreSort();
+              }
+
+              if (!localLoad){
+                fetchFriendsDB();
+              }
+
+              setTimeout("waitAndRefreshView();", 1000);
+          }
+
+          function storeColumnsSelection() {
+            if (supports_html5_storage()) {
+              storeColumnChecked(document.getElementById("chkBirth"));
+              storeColumnChecked(document.getElementById("chkGender"));
+              storeColumnChecked(document.getElementById("chkHometown"));
+              storeColumnChecked(document.getElementById("chkRelStatus"));
+            }
+          }
+
+          function storeSort() {
+              localStorage.setItem("sort", mCurrentSort);
+          }
+
+          function storeColumnChecked(chk) {
+              localStorage.setItem(chk.getAttribute("id"), chk.checked);
+          }
+
+          function restoreSort(chk) {
+              var storedValue = localStorage.getItem("sort");
+              if (storedValue != "undefined" && storedValue != null) {
+                  mCurrentSort = storedValue;
+              }
+          }
+
+          function restoreColumnChecked(chk) {
+              var storedValue = localStorage.getItem(chk.getAttribute("id"));
+              if (storedValue != "undefined" && storedValue != null) {
+                  chk.checked = storedValue == "true";
+              }
+          }
+
+          function supports_html5_storage() {
+              try {
+                  return 'localStorage' in window && window['localStorage'] !== null;
+              } catch (e) {
+                  return false;
+              }
+          }
+
+          function waitAndRefreshView() {
+              var place = 0;
+              while (mFriendsDB[place] != null) place++;
+              if (place != mFriendsDB.length) {
+                  setTimeout("waitAndRefreshView();", 1000);
+              } else {
+                  localStorage.setItem("friendsDB", JSON.stringify(mFriendsDB));
+                  fillRelStatusCombo();
+                  fillHometownCombo();
+                  filterFriendsDB();
+                  refreshView(1);
+                  mLoadInProgress = false;
+              }
+          }
+
+          function fetchFriendsDB() {
+              mDivFriends.innerHTML = "<B>Getting friends List...</B>";
+              mFriendsDB = new Array(1);
+              FB.api('/me/friends?' + accessToken, function (response) {
+                  mFriendsDB = new Array(response.data.length);
+                  for (var i = 0; i < response.data.length; i++) {
+                      FB.api('/' + response.data[i].id.toString() + '?' + accessToken,
+                        function (innerResponse) {
+                            if (innerResponse) {
+                                var place = 0;
+                                while (mFriendsDB[place] != null) place++;
+                                mFriendsDB[place] = {
+                                    "visible": false,
+                                    "data": innerResponse
+                                };
+                                drawStatusBar(place + 1, response.data.length);
+                            }
+                        }
+                    );
+                  }
+              });
+          }
+
+          function contains(a, obj) {
+              var ret = false;
+              for(var i = 0; i < a.length; i++) {
+                if(a[i] === obj){
+                  ret = true;
+                }
+              }
+              return ret;
+          }
+
+          function sort(arr) {
+              var changes;
+              do {
+                  changes = false;
+                  for (var i = 0; i < arr.length - 1; i++) {
+                      if (arr[i] > arr[i + 1]) {
+                          var aux = arr[i];
+                          arr[i] = arr[i + 1];
+                          arr[i + 1] = aux;
+                          changes = true;
+                      }
+                  }
+              } while (changes);
+          }
+
+          function getValidOptValue(relStatusTxt, prefix) {
+              return prefix + relStatusTxt.replace(/ /gi, '').replace(/'/gi, "").replace(/,/gi, "");
+          }
+
+          function fillCombo(arr, cbo, prefix) {
+              for (var i = 0; i < arr.length; i++) {
+                  var newOption = new Option(arr[i], getValidOptValue(arr[i], prefix));
+                  cbo.options.add(newOption);
+              }
+          }
+
+          function fillRelStatusCombo() {
+              var relStatuses = [];
+              var nextIdx = 0;
+              for (var i = 0; i < mFriendsDB.length - 1; i++) {
+                if (typeof(mFriendsDB[i].data.relationship_status) != "undefined"
+                    && !contains(relStatuses, mFriendsDB[i].data.relationship_status)) {
+                    relStatuses[nextIdx] = mFriendsDB[i].data.relationship_status;
+                    nextIdx++;
+                }
+            }
+
+            sort(relStatuses);
+
+            var cmb = document.getElementById('cmbRelStatus');
+            fillCombo(relStatuses, cmb, 'optRelStatus'); 
+          }
+
+          function fillHometownCombo() {
+              var hometowns = [];
+              var nextIdx = 0;
+              for (var i = 0; i < mFriendsDB.length - 1; i++) {
+                  if (typeof (mFriendsDB[i].data.hometown) != "undefined"
+                      && mFriendsDB[i].data.hometown.name != null
+                      && !contains(hometowns, mFriendsDB[i].data.hometown.name)) {
+                      hometowns[nextIdx] = mFriendsDB[i].data.hometown.name;
+                      nextIdx++;
+                  }
+              }
+
+              sort(hometowns);
+
+              var cmb = document.getElementById('cmbHometown');
+              fillCombo(hometowns, cmb, 'optHometown'); 
+          }           
+
+            function roundNumber(rnum, rlength) { // Arguments: number to round, number of decimal places
+                var newnumber = Math.round(rnum * Math.pow(10, rlength)) / Math.pow(10, rlength);
+                return newnumber; 
+            }
+
+            function drawStatusBar(done, total) {
+                var markup = "<B>Getting friends Info: " + roundNumber(done/total*100,2) + "%</B><BR/>";
+                markup += "<table class=\"counter\" width=\"80%\" cellspacing=\"0\"><tr\">";
+                var maxCells = 100;
+                for (var i=0; i<maxCells; i++){
+                    var color;
+                    if (i / maxCells < done / total) {
+                        color = "#627AAD";
+                    } else {
+                        color = "#3B5998";
+                    }
+
+                    markup += "<td style=\"background-color:" + color + "\">&nbsp;</td>";
+                }
+                markup += "</tr></table>";
+                mDivFriends.innerHTML = markup;
+            }
+
+          // END REGION MAIN
+
+          // REGION SORT          
+
+            function getIsSortedCaption(field) {
+                var ret = "";
+                if (mCurrentSort == field) {
+                    ret = "<img src=\"Arrow_up.png\"/>&nbsp;";
+                } else if (mCurrentSort == field + "desc") {
+                    ret = "<img src=\"Arrow_down.png\"/>&nbsp;";
+                }
+                return ret;
+            }
+
+            function renderStringComparable(info) {
+                return info.toString().toUpperCase().replace("Á", "A").replace("É", "E").replace("Í", "I").replace("Ó", "O").replace("Ú", "U");
+            }
+
+            function sortFriendsDB(sortBy) {
+                if (mCurrentSort == sortBy) {
+                    mCurrentSort = sortBy + "desc";
+                } else {
+                    mCurrentSort = sortBy;
+                }
+
+                if (mFriendsDB.length > 1) {
+                    var somethingChanged;
+                    do {
+                        somethingChanged = false;
+                        for (var i = 0; i < mFriendsDB.length - 1; i++) {
+                            var userInformation = mFriendsDB[i].data;
+                            var nextUserInformation = mFriendsDB[i + 1].data;
+                            
+                            if (mCurrentSort == "name" && renderStringComparable(userInformation.name) > renderStringComparable(nextUserInformation.name)
+                            || mCurrentSort == "namedesc" && renderStringComparable(userInformation.name) < renderStringComparable(nextUserInformation.name)
+
+                            || ( 
+                                ( mCurrentSort == "homeTown" || mCurrentSort == "homeTowndesc") 
+                                && ( typeof(userInformation.hometown) == "undefined" || userInformation.hometown.name == null )
+                                && typeof(nextUserInformation.hometown) != "undefined" && nextUserInformation.hometown.name != null
+                               )
+                            || mCurrentSort == "homeTown" && typeof(userInformation.hometown) != "undefined" && userInformation.hometown.name != null
+                                                          && typeof(nextUserInformation.hometown) != "undefined" && nextUserInformation.hometown.name != null
+                                                          && renderStringComparable(formatObjectData(userInformation.hometown)) > renderStringComparable(formatObjectData(nextUserInformation.hometown))
+                            || mCurrentSort == "homeTowndesc" && typeof(userInformation.hometown) != "undefined" && userInformation.hometown.name != null
+                                                              && typeof(nextUserInformation.hometown) != "undefined" && nextUserInformation.hometown.name != null
+                                                              && renderStringComparable(formatObjectData(userInformation.hometown)) < renderStringComparable(formatObjectData(nextUserInformation.hometown))
+
+                            || mCurrentSort == "gender" && (!userInformation.gender && nextUserInformation.gender
+                                                            || userInformation.gender > nextUserInformation.gender)                                                            
+                            || mCurrentSort == "genderdesc" && (!userInformation.gender && nextUserInformation.gender
+                                                                || userInformation.gender < nextUserInformation.gender)
+
+                            || mCurrentSort == "relStatus" && typeof(userInformation.relationship_status) == "undefined"  
+                                                           && typeof(nextUserInformation.relationship_status) != "undefined"
+                            || mCurrentSort == "relStatus" && typeof (userInformation.relationship_status) != "undefined" 
+                                                           && typeof(nextUserInformation.relationship_status) != "undefined"
+                                                           && userInformation.relationship_status > nextUserInformation.relationship_status
+                            || mCurrentSort == "relStatusdesc" && typeof (userInformation.relationship_status) == "undefined"
+                                                               && typeof (nextUserInformation.relationship_status) != "undefined"
+                            || mCurrentSort == "relStatusdesc" && typeof (userInformation.relationship_status) != "undefined"
+                                                               && typeof (nextUserInformation.relationship_status) != "undefined"
+                                                               && userInformation.relationship_status < nextUserInformation.relationship_status
+
+                            || mCurrentSort == "birth" && !userInformation.birthday && nextUserInformation.birthday
+                            || mCurrentSort == "birth" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length == 2
+                                                       && nextUserInformation.birthday.split("/").length > 2
+                            || mCurrentSort == "birth" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length > 2
+                                                       && nextUserInformation.birthday.split("/").length > 2
+                                                       && (new Date(parseInt(userInformation.birthday.split("/")[2]), parseInt(userInformation.birthday.split("/")[0]) - 1, parseInt(userInformation.birthday.split("/")[1]))) >
+                                                          (new Date(parseInt(nextUserInformation.birthday.split("/")[2]), parseInt(nextUserInformation.birthday.split("/")[0]) - 1, parseInt(nextUserInformation.birthday.split("/")[1])))
+                            || mCurrentSort == "birth" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length == 2
+                                                       && nextUserInformation.birthday.split("/").length == 2
+                                                       && (new Date(2000, parseInt(userInformation.birthday.split("/")[0]) - 1, parseInt(userInformation.birthday.split("/")[1]))) >
+                                                          (new Date(2000, parseInt(nextUserInformation.birthday.split("/")[0]) - 1, parseInt(nextUserInformation.birthday.split("/")[1])))
+                            || mCurrentSort == "birthdesc" && !userInformation.birthday && nextUserInformation.birthday
+                            || mCurrentSort == "birthdesc" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length == 2
+                                                       && nextUserInformation.birthday.split("/").length > 2
+                            || mCurrentSort == "birthdesc" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length > 2
+                                                       && nextUserInformation.birthday.split("/").length > 2
+                                                       && (new Date(parseInt(userInformation.birthday.split("/")[2]), parseInt(userInformation.birthday.split("/")[0]) - 1, parseInt(userInformation.birthday.split("/")[1]))) <
+                                                          (new Date(parseInt(nextUserInformation.birthday.split("/")[2]), parseInt(nextUserInformation.birthday.split("/")[0]) - 1, parseInt(nextUserInformation.birthday.split("/")[1])))
+                            || mCurrentSort == "birthdesc" && userInformation.birthday && nextUserInformation.birthday
+                                                       && userInformation.birthday.split("/").length == 2
+                                                       && nextUserInformation.birthday.split("/").length == 2
+                                                       && (new Date(2000, parseInt(userInformation.birthday.split("/")[0]) - 1, parseInt(userInformation.birthday.split("/")[1]))) <
+                                                          (new Date(2000, parseInt(nextUserInformation.birthday.split("/")[0]) - 1, parseInt(nextUserInformation.birthday.split("/")[1])))
+                        ) {
+                                somethingChanged = true;
+                                var aux = mFriendsDB[i];
+                                mFriendsDB[i] = mFriendsDB[i + 1];
+                                mFriendsDB[i + 1] = aux;
+                            }
+                        }
+                    } while (somethingChanged);                    
+                }
+            }
+
+            // END REGION SORT
+
+            // REGION REFRESH
+
+            function formatDate(date) {
+                var dateStr = "";
+                if (date) {
+                    if (date.split('/').length > 2) {
+                        dateStr = date.split("/")[1] + '/' + date.split("/")[0] + '/' + date.split("/")[2];
+                    } else {
+                        dateStr = date.split("/")[1] + '/' + date.split("/")[0];
+                    }
+                } else {
+                    dateStr = "&nbsp;";
+                }
+                return dateStr;
+            } 
+            
+            function formatData(data){
+                var dataStr;
+                if (typeof(data)!="undefined") dataStr = data;
+                else dataStr = "";
+                return dataStr;
+            }
+
+            function formatObjectData(data) {
+                var dataStr;
+                if (typeof (data) != "undefined"
+                    && data.name != null) dataStr = data.name;
+                else dataStr = "";
+                return dataStr;
+            }
+
+            function refreshView(page) {
+                var chkGender = document.getElementById("chkGender");
+                var chkBirth = document.getElementById("chkBirth");
+                var chkRelStatus = document.getElementById("chkRelStatus");
+                var chkHometown = document.getElementById("chkHometown");
+
+                var numCols = 1;
+                var markup = "<tr><td style=\"background-color:#627AAD \"><center><table class=\"hidden\"><tr><td class=\"hidden\">" +
+					"<a class='utilsPanel' title='Sort' href=\"javascript:sortChanged('name');\"><div id=\"nameCaption\">Name</div></a></td>" +
+				 	"<td class=\"hidden\">" + getIsSortedCaption("name") + "</td></tr></table></center></td>";
+
+                if (chkGender.checked){
+                    numCols++;
+				    markup += "<td style=\"background-color:#627AAD \"><center><table class=\"hidden\"><tr><td class=\"hidden\">" +
+					"<a class='utilsPanel' title='Sort' href=\"javascript:sortChanged('gender');\"><div id=\"birthCaption\">Gender</div></a></td>" +
+				 	"<td class=\"hidden\">" + getIsSortedCaption("gender") + "</td></tr></table></center></td>"; 
+                }
+
+                if (chkBirth.checked) {
+                    numCols++;
+                    markup += "<td style=\"background-color:#627AAD \"><center><a class='utilsPanel' title='Sort' href=\"javascript:sortChanged('birth');\">Birth</a>" + getIsSortedCaption("birth") + "</center></td>";
+                }
+
+                if (chkRelStatus.checked) {
+                    numCols++;
+                    markup += "<td style=\"background-color:#627AAD \"><center><a class='utilsPanel' title='Sort' href=\"javascript:sortChanged('relStatus');\">Status</a>" + getIsSortedCaption("relStatus") + "</center></td>";
+                }
+
+                if (chkHometown.checked) {
+                    numCols++;
+                    markup += "<td style=\"background-color:#627AAD \"><center><a class='utilsPanel' title='Sort' href=\"javascript:sortChanged('homeTown');\">Hometown</a>" + getIsSortedCaption("homeTown") + "</center></td>"
+                }
+                
+                markup += "</tr>";
+
+                if (!mFriendsDB || mFriendsDB.length == 0) {
+                    markup = "<table>" + markup;                    
+                  markup += "<tr><td colspan='" + numCols +"'>No friends information available.</td></tr>";
+              } else {
+                    var cont = 0;
+                    var pageCount = 0;
+                    var pageStart = page * mPageSize - mPageSize;                    
+                    for (var i = 0; i < mFriendsDB.length; i++) {
+                        if (mFriendsDB[i].visible) {
+                            if (cont >= pageStart
+                                && cont < page * mPageSize) {
+                                var style = "";
+                                if (pageCount % 2 != 0){
+                                    style = " style=\"background-color:SeaShell\"";
+                                }
+                                markup += "<tr>" +
+                                        "<td" + style + ">" + mFriendsDB[i].data.name + "</td>";  
+                                                                      
+                                if (chkGender.checked){
+                                    markup += "<td" + style + ">" + formatData(mFriendsDB[i].data.gender) + "</td>";
+                                }
+                                if (chkBirth.checked) {
+                                    markup += "<td" + style + ">" + formatDate(mFriendsDB[i].data.birthday) + "</td>";
+                                }
+
+                                if (chkRelStatus.checked) {
+                                    markup += "<td" + style + ">" + formatData(mFriendsDB[i].data.relationship_status) + "</td>";
+                                }
+
+                                if (chkHometown.checked) {
+                                    markup += "<td" + style + ">" + formatObjectData(mFriendsDB[i].data.hometown) + "</td></tr>";
+                                }
+
+                                pageCount++;
+                            }
+                            cont++;
+                        }
+                    }
+
+                    for (var i = pageCount; i < mPageSize; i++) {
+                        var style = "";
+                        if (i % 2 != 0) {
+                            style = " style=\"background-color:SeaShell\"";
+                        }
+                        markup += "<tr>" +
+                                    "<td" + style + ">&nbsp;</td>" +
+                                    "<td" + style + ">&nbsp;</td>" +
+                                    "<td" + style + ">&nbsp;</td>" +
+                                    "<td" + style + ">&nbsp;</td>" +
+                                    "<td" + style + ">&nbsp;</td></tr>";
+                    }
+
+                    //paging
+                    markup += "<tr><td colspan='" + numCols +"' style=\"background-color:#627AAD\"><center>";
+                    if (page > 1) {
+                        markup += "<a class='utilsPanel' title='Previous Page' href=\"javascript:refreshView(" +
+                                  (page - 1) + ");\">Previous Page</a>";
+                    }
+                    else {
+                        markup += "<b style=\"text-decoration:linethrough;\">Previous Page</B>";
+                    }
+                    markup += "&nbsp;&nbsp;&nbsp;<B>Page: " + page + " of " +
+                              Math.ceil(cont / mPageSize) + "</B>&nbsp;&nbsp;&nbsp;";
+                    if (page*mPageSize < cont) {
+                        markup += "<a class='utilsPanel' title='Next Page' href=\"javascript:refreshView(" +
+                                  (page + 1) + ");\">Next Page</a>";
+                    }
+                    else {
+                        markup += "<B style=\"text-decoration:linethrough;\">Next Page</B>";
+                    }
+                    markup += "</center></td></tr>";
+
+                    // counter
+                    var markupPrefix = "<table><tr><td colspan='" + numCols +"' style=\"background-color:#627AAD\"><center>";
+                    markupPrefix += "<B>Total: " + cont + " friends</B>";
+                    markupPrefix += "</center></td></tr>";
+                    markup = markupPrefix + markup;
+                }
+
+                markup += "</table>";
+                mDivFriends.innerHTML = markup;
+            }
+
+            // END REGION REFRESH
+
+            // REGION FILTER
+         
+            function filterFriendsDB(){
+                for (var i = 0; i < mFriendsDB.length; i++) {
+                    mFriendsDB[i].visible = satisficesRelStatusSelection(mFriendsDB[i].data)
+                                            && satisficesGenderSelection(mFriendsDB[i].data)
+                                            && satisficesHometownSelection(mFriendsDB[i].data);
+                }
+            }
+
+            function satisficesRelStatusSelection(friendData) {
+                var cmb = document.getElementById('cmbRelStatus');
+                var ret = false;
+                if (cmb.value == "Any"
+                    || typeof (friendData.relationship_status) != "undefined"
+                       && cmb.value == getValidOptValue(friendData.relationship_status, "optRelStatus")){
+                    ret = true;
+                }
+                return ret;
+            }
+
+            function satisficesGenderSelection(friendData) {
+             var rdoAll = document.getElementById('rdoGenderAll');
+             var rdoFemale = document.getElementById('rdoGenderFemale');
+             var rdoMale = document.getElementById('rdoGenderMale');
+             var ret = false;
+
+             if (rdoAll.checked || rdoFemale.checked && friendData.gender == 'female') {
+                 ret = true;
+                } else {
+                    if (rdoMale.checked && friendData.gender == 'male') {
+                        ret = true;
+                    }
+                }
+
+                return ret;
+            }
+
+            function satisficesHometownSelection(friendData) {
+                var cmb = document.getElementById('cmbHometown');
+                var ret = false;
+                if (cmb.value == "Any"
+                    || typeof (friendData.hometown) != "undefined"
+                       && friendData.hometown.name != null
+                       && cmb.value == getValidOptValue(friendData.hometown.name, "optHometown")) {
+                    ret = true;
+                }
+                return ret;
+            }          
+
+            // END REGION FILTER  
+         
+         // REGION EVENTS:
+
+        function filterChanged() {
+            if (!mLoadInProgress) {
+                mDivFriends.innerHTML = "<B>Filtering...</B>";
+                filterFriendsDB();
+                refreshView(1);
+            }
+        }
+
+        function sortChanged(sortBy) {
+            mDivFriends.innerHTML = "<B>Sorting...</B>";
+            sortFriendsDB(sortBy)
+            storeSort();
+            refreshView(1);
+        }
+
+        function columnsChanged() {
+            if (!mLoadInProgress) {
+                mDivFriends.innerHTML = "<B>Updating Columns...</B>";
+                storeColumnsSelection();
+                refreshView(1);
+            }
+        }
+
+        function showCols(show) {
+            var divCols = document.getElementById('divCols');
+            var divShowCols = document.getElementById('divShowCols');
+            if (show) {
+                divCols.style.visibility = "visible";
+                divShowCols.style.visibility = "hidden";
+            }else{
+                divCols.style.visibility = "hidden";
+                divShowCols.style.visibility = "visible";
+            }
+        }
+
+        function showFilters(show) {
+            var divFilters = document.getElementById('divFilters');
+            var divShowFilters = document.getElementById('divShowFilters');
+            if (show) {
+                divFilters.style.visibility = "visible";
+                divShowFilters.style.visibility = "hidden";
+            } else {
+                divFilters.style.visibility = "hidden";
+                divShowFilters.style.visibility = "visible";
+            }
+        }
+
+        // END REGION EVENTS:
+
+       </script>           
+    </body>
+ </html>
