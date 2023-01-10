@@ -1,23 +1,5 @@
 <html>
     <head>
-        <script>
-            window.fbAsyncInit = function() {
-              FB.init({
-                appId      : '128582473878430',
-                xfbml      : true,
-                version    : 'v15.0'
-              });
-              FB.AppEvents.logPageView();
-            };
-          
-            (function(d, s, id){
-               var js, fjs = d.getElementsByTagName(s)[0];
-               if (d.getElementById(id)) {return;}
-               js = d.createElement(s); js.id = id;
-               js.src = "https://connect.facebook.net/en_US/sdk.js";
-               fjs.parentNode.insertBefore(js, fjs);
-             }(document, 'script', 'facebook-jssdk'));
-        </script>
         <title>FriendsDB</title>
         <script src="./json2.js"></script>
         <meta http-equiv="X-Frame-Options" content="allow">
@@ -192,43 +174,54 @@
           var mCurrentSort;
           var mPageSize = 30;
           var mLoadInProgress = true;
-          if (window.location.hash.length == 0) {
-              url = "https://www.facebook.com/dialog/oauth?client_id=128582473878430" +
-                  "&response_type=token&redirect_uri=" + 
-                  "https://xtoik.github.io/FriendsDB/index.html" +
-                  "&scope=friends_relationship_details,friends_birthday,friends_relationships,friends_hometown";
-              //alert('Opening URL: ' + url);
-              window.location = url;
-          } else {
-              accessToken = window.location.hash.substring(1);
-
+          
+          window.fbAsyncInit = function() {
               FB.init({
-                  appId: '128582473878430', cookie: true,
-                  status: true, xfbml: true
+                appId      : '128582473878430',
+                xfbml      : true,
+                version    : 'v15.0'
               });
 
-              var localLoad = false;
-              if (supports_html5_storage()) {
-                  try{
-                    mFriendsDB = JSON.parse(localStorage.getItem("friendsDB"));
-                  } catch (e) {                    
-                    mFriendsDB = null;
-                  }
-                localLoad = typeof (mFriendsDB) != "undefined" && mFriendsDB != null;
+              FB.login(function(response) {
+                    if (response.authResponse) {
+                        var localLoad = false;
+                        if (supports_html5_storage()) {
+                            try{
+                                mFriendsDB = JSON.parse(localStorage.getItem("friendsDB"));
+                            } catch (e) {                    
+                                mFriendsDB = null;
+                            }
+                
+                            localLoad = typeof (mFriendsDB) != "undefined" && mFriendsDB != null;
 
-                restoreColumnChecked(document.getElementById("chkBirth"));
-                restoreColumnChecked(document.getElementById("chkGender"));
-                restoreColumnChecked(document.getElementById("chkHometown"));
-                restoreColumnChecked(document.getElementById("chkRelStatus"));
-                restoreSort();
-              }
+                            restoreColumnChecked(document.getElementById("chkBirth"));
+                            restoreColumnChecked(document.getElementById("chkGender"));
+                            restoreColumnChecked(document.getElementById("chkHometown"));
+                            restoreColumnChecked(document.getElementById("chkRelStatus"));
+                            restoreSort();
+                        }
 
-              if (!localLoad){
-                fetchFriendsDB();
-              }
+                        if (!localLoad){
+                            fetchFriendsDB();
+                        }
 
-              setTimeout("waitAndRefreshView();", 1000);
-          }
+                        setTimeout("waitAndRefreshView();", 1000);
+                    } else {
+                        console.log('User cancelled login or did not fully authorize.');
+                    }
+              });
+
+              
+              FB.AppEvents.logPageView();
+            };
+          
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
 
           function storeColumnsSelection() {
             if (supports_html5_storage()) {
