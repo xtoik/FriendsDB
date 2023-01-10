@@ -280,10 +280,10 @@
           function fetchFriendsDB() {
               mDivFriends.innerHTML = "<B>Getting friends List...</B>";
               mFriendsDB = new Array(1);
-              FB.api('/me/friends?' + accessToken, function (response) {
+              FB.api('/me/friends', function (response) {
                   mFriendsDB = new Array(response.data.length);
                   for (var i = 0; i < response.data.length; i++) {
-                      FB.api('/' + response.data[i].id.toString() + '?' + accessToken,
+                      FB.api('/' + response.data[i].id.toString(),
                         function (innerResponse) {
                             if (innerResponse) {
                                 var place = 0;
